@@ -41,11 +41,12 @@ def detail(url):
 
 
 def getpic(name):
+    path=r"D:\learn\picture\\"
     f=open(name+".txt","r")
     txt = f.read().split(',')[-1]
     f.close()
     imgdata = base64.b64decode(txt)
-    file = open("{}.jpg".format(name), 'wb')
+    file = open(r"{}.jpg".format(path+name), 'wb')
     file.write(imgdata)
     file.close()
     os.remove(name+".txt")
