@@ -14,7 +14,7 @@ class down:
     def __init__(self, url):
         self.bro = webdriver.Chrome()
         self.root_url = url
-        for i in range(3, 11):
+        for i in range(1, 11):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -28,22 +28,13 @@ class down:
         text = bro.get(tagre_url).text
         tree = etree.HTML(text)
         url_list = tree.xpath("//div[@id='tpl-img-content']/li/a/@href")
-        name_list = tree.xpath("//div[@id='tpl-img-content']/li/a/@title")
-        name_list1 = list(set(name_list))
-        name_list1.sort(key=name_list.index)
-        url_list2 = list(set(url_list))
-        url_list2.sort(key=url_list.index)
-        get_dict = {}
-        for i in range(20):
-            get_dict[name_list1[i]] = root_url + url_list2[i]
+        url_list = url_list
+        l2 = list(set(url_list))
+        l2.sort(key=url_list.index)
 
-        dict = {'SF-No.178 Eri Kitagawa': 15, 'SF-No.189 Azusa Takagi(高木梓)': 15, 'Tifa succubus': 19, '人美身材靓呢': 19,
-                '写真集': 19, '可爱女仆MargaritaE.part2 ': 17, '嫩滑的奶子哦': 19, '彩虹内衣喜欢吗': 19, '性感又清新的大学生唐佳怡可爱女仆装和性感兔女郎写真': 19,
-                '气质女神': 19, '能顶到你屏幕的大奶呢': 16, '都市丽人王馨瑶黑色短裙加黑丝美腿性感写真 ': 29, '韩国人气模特_ 孙允珠_ 高清套图 ': 30}
         ls = []
-        for i in get_dict:
-            if i in dict:
-                ls.append(get_dict[i])
+        for i in range(20):
+            ls.append(root_url + l2[i])
         return ls
 
     def detail(self, url):
@@ -52,7 +43,6 @@ class down:
         try:
             WebDriverWait(bro, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, "videopic")))
         except:
-            print("iojioiojjio")
             bro.get(url)
             WebDriverWait(bro, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, "videopic")))
 
@@ -75,6 +65,7 @@ class down:
                 file = open("{}.txt".format(name), 'w')
                 file.write(txt)
                 file.close()
+
 
     def getpic(self, name):
         path = r"D:\learn\picture\\"
