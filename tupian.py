@@ -55,7 +55,16 @@ class down:
             file = open("{}.txt".format(name), 'w')
             file.write(txt)
             file.close()
-            self.getpic(name)
+            try:
+                self.getpic(name)
+            except:
+                time.sleep(3)
+                txt = item.get_property("src")
+                name = item.get_property("title")
+                file = open("{}.txt".format(name), 'w')
+                file.write(txt)
+                file.close()
+
 
     def getpic(self, name):
         path = r"D:\learn\picture\\"
