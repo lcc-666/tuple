@@ -14,11 +14,12 @@ class down:
     def __init__(self, url):
         self.bro = webdriver.Chrome()
         self.root_url = url
-        for i in range(1, 3):
+        for i in range(1, 11):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
                 self.detail(item)
+            time.sleep(5)
 
     def get_list(self, page):
         root_url = self.root_url
