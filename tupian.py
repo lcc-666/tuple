@@ -1,36 +1,67 @@
 import time
 import tqdm
-import requests
 from lxml import etree
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 from xiourenji.base64tojpg import getpic
+from xiourenji.qvchong import deduplication
 
 
 class down:
     def __init__(self, url):
-        self.bro = webdriver.Chrome()
+        self.bro=webdriver.Chrome()
         self.root_url = url
-        for i in range(13, 150):
+        self.new_url()
+        for i in range(35, 40):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
                 self.detail(item)
 
+    def new_url(self):
+        options = Options()
+        prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
+        options.add_experimental_option("prefs", prefs)
+        bro = webdriver.Chrome(options=options)
+        status = 0
+        while status != 200:
+            try:
+                bro.get(self.root_url)
+                status = 200
+            except WebDriverException:
+                bro.refresh()
+                time.sleep(3)
+        url = bro.find_element(by=By.XPATH, value="/html/body/div/p[1]")
+        self.root_url = "https://"+url.text
+        bro.close()
+
+
     def get_list(self, page):
         root_url = self.root_url
         tagre_url = "{}/tupian/list-%E6%B8%85%E7%BA%AF%E5%94%AF%E7%BE%8E-{}.html".format(root_url, page)
-        bro = requests.session()
-        text = bro.get(tagre_url).text
+        options = Options()
+        prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
+        options.add_experimental_option("prefs", prefs)
+        bro = webdriver.Chrome(options=options)
+        status = 0
+        while status != 200:
+            try:
+                bro.get(tagre_url)
+                status = 200
+            except WebDriverException:
+                bro.refresh()
+                time.sleep(2)
+
+        text = bro.page_source
         tree = etree.HTML(text)
         url_list = tree.xpath("//div[@id='tpl-img-content']/li/a/@href")
-        url_list = url_list
-        l2 = list(set(url_list))
-        l2.sort(key=url_list.index)
-
+        l2 = deduplication(url_list)
+        bro.close()
         ls = []
         for i in range(20):
             ls.append(root_url + l2[i])
@@ -42,7 +73,7 @@ class down:
         try:
             wait = WebDriverWait(bro, 3)
             wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
-        except TimeoutError:
+        except TimeoutException:
             bro.get(url)
         ls = bro.find_elements(by=By.CLASS_NAME, value="videopic")
 
@@ -64,8 +95,10 @@ class down:
                 file = open("{}.txt".format(name), 'w')
                 file.write(txt)
                 file.close()
-                getpic(name)
-
+                try:
+                    getpic(name)
+                except:
+                    pass
 
 if __name__ == '__main__':
     url = "https://www.95531d0bd91f.com/"
