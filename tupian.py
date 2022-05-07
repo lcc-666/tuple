@@ -1,25 +1,24 @@
-import base64
-import os
 import time
 import tqdm
 import requests
 from lxml import etree
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+
+from xiourenji.base64tojpg import getpic
 
 
 class down:
     def __init__(self, url):
         self.bro = webdriver.Chrome()
         self.root_url = url
-        for i in range(1, 11):
+        for i in range(13, 150):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
                 self.detail(item)
-            time.sleep(5)
 
     def get_list(self, page):
         root_url = self.root_url
@@ -41,11 +40,10 @@ class down:
         bro = self.bro
         bro.get(url)
         try:
-            WebDriverWait(bro, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, "videopic")))
-        except:
+            wait = WebDriverWait(bro, 3)
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
+        except TimeoutError:
             bro.get(url)
-            WebDriverWait(bro, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, "videopic")))
-
         ls = bro.find_elements(by=By.CLASS_NAME, value="videopic")
 
         for item in tqdm.tqdm(ls):
@@ -57,26 +55,16 @@ class down:
             file.write(txt)
             file.close()
             try:
-                self.getpic(name)
+                getpic(name)
             except:
+                item.click()
                 time.sleep(3)
                 txt = item.get_property("src")
                 name = item.get_property("title")
                 file = open("{}.txt".format(name), 'w')
                 file.write(txt)
                 file.close()
-
-
-    def getpic(self, name):
-        path = r"D:\learn\picture\\"
-        f = open(name + ".txt", "r")
-        txt = f.read().split(',')[-1]
-        f.close()
-        imgdata = base64.b64decode(txt)
-        file = open(r"{}.jpg".format(path + name), 'wb')
-        file.write(imgdata)
-        file.close()
-        os.remove(name + ".txt")
+                getpic(name)
 
 
 if __name__ == '__main__':
