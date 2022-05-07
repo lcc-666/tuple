@@ -15,9 +15,10 @@ from xiourenji.qvchong import deduplication
 class down:
     def __init__(self, url):
         self.bro=webdriver.Chrome()
+        self.bro.set_page_load_timeout(1)
         self.root_url = url
         self.new_url()
-        for i in range(35, 40):
+        for i in range(36, 37):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -27,6 +28,8 @@ class down:
         options = Options()
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         options.add_experimental_option("prefs", prefs)
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
         bro = webdriver.Chrome(options=options)
         status = 0
         while status != 200:
@@ -36,17 +39,21 @@ class down:
             except WebDriverException:
                 bro.refresh()
                 time.sleep(3)
-        url = bro.find_element(by=By.XPATH, value="/html/body/div/p[1]")
-        self.root_url = "https://"+url.text
+        url = bro.find_elements(by=By.CLASS_NAME,value="header_title")
+        self.root_url = "https://"+url[0].text
+        print("url更新")
         bro.close()
 
 
     def get_list(self, page):
+
         root_url = self.root_url
         tagre_url = "{}/tupian/list-%E6%B8%85%E7%BA%AF%E5%94%AF%E7%BE%8E-{}.html".format(root_url, page)
         options = Options()
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         options.add_experimental_option("prefs", prefs)
+        # options.add_argument("--headless")
+        # options.add_argument("--disable-gpu")
         bro = webdriver.Chrome(options=options)
         status = 0
         while status != 200:
@@ -63,13 +70,18 @@ class down:
         l2 = deduplication(url_list)
         bro.close()
         ls = []
+        print("列表获取")
         for i in range(20):
             ls.append(root_url + l2[i])
         return ls
 
     def detail(self, url):
         bro = self.bro
-        bro.get(url)
+        try:
+            bro.get(url)
+        except TimeoutException:
+            pass
+
         try:
             wait = WebDriverWait(bro, 3)
             wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
