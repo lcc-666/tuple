@@ -1,14 +1,13 @@
 from PIL import Image, UnidentifiedImageError
 import os
-
+import shutil
 
 def file_list(path):
     ls = os.listdir(path)
     for i in ls:
-        a = i.split(".")[-1]
-        if a == "jpg":
-            new_path = path + r"\\" + i
-            edit(new_path)
+        new_path = path + "\\" + i
+        edit(new_path)
+        shutil.move(new_path,r"D:\learn\picture\jianji\\"+i)
 
 
 def edit(path):
