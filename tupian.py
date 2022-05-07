@@ -10,6 +10,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from xiourenji.base64tojpg import getpic
 from xiourenji.qvchong import deduplication
+from xiourenji.clip import  file_list,edit
 
 
 class down:
@@ -18,7 +19,7 @@ class down:
         self.bro.set_page_load_timeout(1)
         self.root_url = url
         self.new_url()
-        for i in range(36, 37):
+        for i in range(37, 100):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -38,7 +39,7 @@ class down:
                 status = 200
             except WebDriverException:
                 bro.refresh()
-                time.sleep(3)
+                time.sleep(5)
         url = bro.find_elements(by=By.CLASS_NAME,value="header_title")
         self.root_url = "https://"+url[0].text
         print("url更新")
@@ -115,3 +116,5 @@ class down:
 if __name__ == '__main__':
     url = "https://www.95531d0bd91f.com/"
     down(url)
+    path = r"D:\learn\picture\quan"
+    file_list(path)
