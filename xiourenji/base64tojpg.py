@@ -8,7 +8,7 @@ base64转jpg
 """
 
 
-def getpic(name, path=r"D:\learn\picture\\"):
+def getpic(name, path=r"D:\learn\picture\quan\\"):
     f = open(name + ".txt", "r")
     txt = f.read().split(',')[-1]
     f.close()
