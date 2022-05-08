@@ -15,11 +15,13 @@ from xiourenji.clip import file_list, edit
 
 class down:
     def __init__(self, url):
+        #options = Options()
+        #options.add_experimental_option("debuggerAddress", "127.0.0.1:9527")
         self.bro = webdriver.Chrome()
         self.bro.set_page_load_timeout(3)
         self.root_url = url
         self.new_url()
-        for i in range(76, 100):
+        for i in range(79, 100):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -77,18 +79,24 @@ class down:
 
     def detail(self, url):
         bro = self.bro
-        try:
-            bro.get(url)
-        except TimeoutException:
-            pass
-        status=0
-        while status!=200:
+        stadus_code=0
+        while stadus_code!=200:
+            try:
+                bro.get(url)
+            except TimeoutException:
+                stadus_code=200
+                pass
+            except WebDriverException:
+                bro.refresh()
+
+        status=False
+        while status is not True:
             try:
                 wait = WebDriverWait(bro, 3)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
-                status=200
+                status=True
             except TimeoutException:
-                bro.refresh()
+                bro.get(url)
         ls = bro.find_elements(by=By.CLASS_NAME, value="videopic")
 
         for item in tqdm.tqdm(ls):
@@ -113,7 +121,7 @@ class down:
                     getpic(name)
                 except:
                     file = open("shao.txt", "a")
-                    file.write(name+":"+url)
+                    file.write(name+":"+url+"\n")
 
 
 
