@@ -1,13 +1,28 @@
-from PIL import Image, UnidentifiedImageError
+from PIL import Image
+from concurrent.futures import ThreadPoolExecutor,as_completed
 import os
 import shutil
+import time
+import tqdm
 
 def file_list(path):
     ls = os.listdir(path)
-    for i in ls:
-        new_path = path + "\\" + i
-        edit(new_path)
-        shutil.move(new_path,r"D:\learn\picture\jianji\\"+i)
+    with ThreadPoolExecutor(max_workers=16) as executor:
+        future_list = []
+        results = []
+        for i in ls:
+            future = executor.submit(thread, i)
+            future_list.append(future)
+        for task in tqdm.tqdm(as_completed(future_list), total=len(future_list)):
+            results.append(task.result())
+
+def thread(i):
+    path = r"D:\learn\picture\quan"
+    new_path = path + "\\" + i
+    edit(new_path)
+    shutil.move(new_path, r"D:\learn\picture\jianji\\" + i)
+
+
 
 
 def edit(path):
