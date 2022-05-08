@@ -16,7 +16,7 @@ from xiourenji.clip import  file_list,edit
 class down:
     def __init__(self, url):
         self.bro=webdriver.Chrome()
-        self.bro.set_page_load_timeout(1)
+        self.bro.set_page_load_timeout(2)
         self.root_url = url
         self.new_url()
         for i in range(37, 100):
