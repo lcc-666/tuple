@@ -10,16 +10,16 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 from xiourenji.base64tojpg import getpic
 from xiourenji.qvchong import deduplication
-from xiourenji.clip import  file_list,edit
+from xiourenji.clip import file_list, edit
 
 
 class down:
     def __init__(self, url):
-        self.bro=webdriver.Chrome()
-        self.bro.set_page_load_timeout(2)
+        self.bro = webdriver.Chrome()
+        self.bro.set_page_load_timeout(3)
         self.root_url = url
         self.new_url()
-        for i in range(37, 100):
+        for i in range(76, 100):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -29,8 +29,8 @@ class down:
         options = Options()
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         options.add_experimental_option("prefs", prefs)
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
+        # options.add_argument("--headless")
+        # options.add_argument("--disable-gpu")
         bro = webdriver.Chrome(options=options)
         status = 0
         while status != 200:
@@ -40,11 +40,10 @@ class down:
             except WebDriverException:
                 bro.refresh()
                 time.sleep(5)
-        url = bro.find_elements(by=By.CLASS_NAME,value="header_title")
-        self.root_url = "https://"+url[0].text
+        url = bro.find_element(by=By.CLASS_NAME, value="header_title")
+        self.root_url = "https://" + url.text
         print("url更新")
         bro.close()
-
 
     def get_list(self, page):
 
@@ -63,7 +62,7 @@ class down:
                 status = 200
             except WebDriverException:
                 bro.refresh()
-                time.sleep(2)
+                # time.sleep(2)
 
         text = bro.page_source
         tree = etree.HTML(text)
@@ -82,17 +81,19 @@ class down:
             bro.get(url)
         except TimeoutException:
             pass
-
-        try:
-            wait = WebDriverWait(bro, 3)
-            wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
-        except TimeoutException:
-            bro.get(url)
+        status=0
+        while status!=200:
+            try:
+                wait = WebDriverWait(bro, 3)
+                wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'content')))
+                status=200
+            except TimeoutException:
+                bro.refresh()
         ls = bro.find_elements(by=By.CLASS_NAME, value="videopic")
 
         for item in tqdm.tqdm(ls):
             item.click()
-            time.sleep(0.5)
+            time.sleep(1)
             txt = item.get_property("src")
             name = item.get_property("title")
             file = open("{}.txt".format(name), 'w')
@@ -111,7 +112,10 @@ class down:
                 try:
                     getpic(name)
                 except:
-                    pass
+                    file = open("shao.txt", "a")
+                    file.write(name+":"+url)
+
+
 
 if __name__ == '__main__':
     url = "https://www.95531d0bd91f.com/"
