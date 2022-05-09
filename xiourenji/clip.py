@@ -20,7 +20,10 @@ def thread(i):
     path = r"D:\learn\picture\quan"
     new_path = path + "\\" + i
     edit(new_path)
-    shutil.move(new_path, r"D:\learn\picture\jianji\\" + i)
+    try:
+        shutil.move(new_path, r"D:\learn\picture\jianji\\" + i)
+    except FileNotFoundError:
+        pass
 
 
 
