@@ -18,7 +18,7 @@ class down:
         self.bro.set_page_load_timeout(3)
         self.root_url = url
         self.new_url()
-        for i in range(140, 150):
+        for i in range(150, 155):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -107,23 +107,17 @@ class down:
             txt = item.get_property("src")
             name = item.get_property("title")
             file = open("{}.txt".format(name), 'w')
+            if len(txt)<1000:
+                time.sleep(2)
+                txt = item.get_property("src")
             file.write(txt)
             file.close()
             try:
                 getpic(name)
             except:
-                item.click()
-                time.sleep(6)
-                txt = item.get_property("src")
-                name = item.get_property("title")
-                file = open("{}.txt".format(name), 'w')
-                file.write(txt)
-                file.close()
-                try:
-                    getpic(name)
-                except:
-                    file = open("shao.txt", "a")
-                    file.write(name + ":" + url + "\n")
+
+                file = open("shao.txt", "a")
+                file.write(name + ":" + url + "\n")
 
 
 if __name__ == '__main__':
