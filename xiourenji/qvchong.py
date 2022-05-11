@@ -1,3 +1,8 @@
+"""
+列表去重后仍然有序
+"""
+
+
 def deduplication(ls):
     l2 = list(set(ls))
     l2.sort(key=ls.index)
