@@ -18,7 +18,7 @@ class down:
         self.bro.set_page_load_timeout(3)
         self.root_url = url
         self.new_url()
-        for i in range(150, 155):
+        for i in range(155, 160):
             ls = self.get_list(i)
             for item in ls:
                 print("第{}页第{}个".format(i, ls.index(item) + 1), item)
@@ -34,8 +34,8 @@ class down:
         options = Options()
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         options.add_experimental_option("prefs", prefs)
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
+        # options.add_argument("--headless")
+        # options.add_argument("--disable-gpu")
         bro = webdriver.Chrome(options=options)
         status = 0
         while status != 200:
@@ -57,8 +57,8 @@ class down:
         options = Options()
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         options.add_experimental_option("prefs", prefs)
-        # options.add_argument("--headless")
-        # options.add_argument("--disable-gpu")
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
         bro = webdriver.Chrome(options=options)
         status = 0
         while status != 200:
@@ -121,7 +121,7 @@ class down:
 
 
 if __name__ == '__main__':
-    url = "https://www.95531d0bd91f.com/"
+    url = "https://www.95531d0bd91f.com/enter/index.html"
     down(url)
     # path = r"D:\learn\picture\quan"
     # file_list(path)
